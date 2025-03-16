@@ -13,6 +13,7 @@ datasource db {
 model Todo {
   id String @id @default(uuid())
   createdAt DateTime @default(now())
+  dueDate DateTime @default(now())
   content String
   completed Boolean @default(false)
 }
