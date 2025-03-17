@@ -1,13 +1,22 @@
+import DynamicNavabr from '@/components/DynamicNavbar'
+
 const HealthDashboard = () => {
   return (
     <div>
-      <h1 className="pb-3">Health Dashboard</h1>
+      <h1 className="pt-3 pb-3">Health</h1>
       <div className="rounded-3xl bg-gray-900 mb-10">
         <div className="px-5 py-5">
-          <h2 className="pb-5">Schedule</h2>
+          <h2 className="pb-5">The Ideal Day</h2>
           <div className="grid md:grid-cols-3">
             <div className="px-5 py-5">
               <h2 className="italic">Daily</h2>
+              <ul className="list-disc list-inside space-y-5">
+                <li>
+                  Exercise - gym / run
+                  <span className=" pl-2 italic text-white/50"> 30-60m</span>
+                </li>
+                <li>Ice Bath x1</li>
+              </ul>
             </div>
             <div className="px-5 py-5">
               <h2 className="italic">Weekly</h2>
