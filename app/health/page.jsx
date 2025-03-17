@@ -1,5 +1,3 @@
-import DynamicNavabr from '@/components/DynamicNavbar'
-
 const HealthDashboard = () => {
   return (
     <div>
