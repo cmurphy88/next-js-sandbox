@@ -17,3 +17,11 @@ model Todo {
   content String
   completed Boolean @default(false)
 }
+
+model Payment {
+  id String @id @default(uuid())
+  name String
+  amount Decimal
+  month String
+  isIncome Boolean @default(false)
+}

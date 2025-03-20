@@ -5,7 +5,6 @@ import { useTransition } from 'react'
 const Todo = ({ todo }) => {
   const [isPending, startTransition] = useTransition()
 
-  console.log('Todo: ', todo)
   return (
     <div
       className={`border border-black/20 cursor-pointer ${

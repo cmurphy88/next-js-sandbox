@@ -11,7 +11,7 @@ const getOpenTodosData = async () => {
       createdAt: 'desc',
     },
   })
-  console.log('TODOs: ', openTodos)
+
   return openTodos
 }
 

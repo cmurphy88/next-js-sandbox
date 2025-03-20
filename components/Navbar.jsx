@@ -8,7 +8,8 @@ const Navbar = () => {
     { href: '/', label: 'Home' },
     { href: '/health', label: 'Health' },
     { href: '/health/plan', label: 'Plan' },
-    { href: 'todos', label: 'Todos' },
+    { href: '/todos', label: 'Todos' },
+    { href: '/finances', label: 'Finances' },
   ]
 
   return (
