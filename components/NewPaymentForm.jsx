@@ -12,7 +12,8 @@ const NewPaymentForm = ({}) => {
         />
         <input
           name="amount"
-          type="text"
+          type="number"
+          step="0.01"
           placeholder="Amount"
           className="border border-white/50 rounded-2xl mr-3 p-1"
         />

@@ -21,7 +21,7 @@ model Todo {
 model Payment {
   id String @id @default(uuid())
   name String
-  amount Decimal
+  amount String
   month String
   isIncome Boolean @default(false)
 }
