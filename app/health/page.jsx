@@ -2,6 +2,22 @@ const HealthDashboard = () => {
   return (
     <div>
       <h1 className="pt-3 pb-3">Health</h1>
+      <div className="rounded-3xl bg-gray-700 mb-10">
+        <div className="p-5">
+          <h2>Goal</h2>
+          <div>
+            <ul>
+              <li>Reach 90kg</li>
+            </ul>
+            <p>How can you do that?</p>
+            <ol className="list-decimal list-inside">
+              <li>Consume 1800 cals p/day</li>
+              <li>Walk 10k steps p/day</li>
+              <li>Srength training 3 p/week</li>
+            </ol>
+          </div>
+        </div>
+      </div>
       <div className="rounded-3xl bg-gray-900 mb-10">
         <div className="px-5 py-5">
           <h2 className="pb-5">The Ideal Day</h2>

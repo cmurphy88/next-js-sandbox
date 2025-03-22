@@ -124,7 +124,7 @@ const Finances = async () => {
             <h2>Total Out</h2>
             <p>£ {totalOutcome.toFixed(2)}</p>
           </div>
-          <div className="md:col-span-2">
+          <div className="md:col-span-2 pb-5">
             <h2>Left Over</h2>
             <p>£ {totalLeftOver.toFixed(2)}</p>
           </div>

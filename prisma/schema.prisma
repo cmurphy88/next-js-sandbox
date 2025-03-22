@@ -25,3 +25,9 @@ model Payment {
   month String
   isIncome Boolean @default(false)
 }
+
+model Weight {
+  id String @id @default(uuid())
+  weight Decimal
+  date DateTime @default(now())
+}
