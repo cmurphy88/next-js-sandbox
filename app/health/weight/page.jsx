@@ -4,16 +4,14 @@ import db from '@/utils/db'
 import WeightChart from '@/components/WeightChart'
 import NewWeightForm from '@/components/NewWeightForm'
 import WeightList from '@/components/WeightList'
+import { getAllUSersWeights, getCurrentUser } from '@/utils/actions'
 
 Chart.register(CategoryScale)
 
 const getWeightEntries = async () => {
-  const weights = await db.weight.findMany({
-    orderBy: {
-      date: 'asc',
-    },
-  })
-
+  const user = await getCurrentUser()
+  const weights = await getAllUSersWeights(user)
+  console.log('HIPPO: ', weights)
   return weights
 }
 

@@ -1,9 +1,18 @@
+'use client'
+
 import { newTodo } from '@/utils/actions'
+import { useActionState } from 'react'
+
+const initialState = {
+  message: null,
+  success: undefined,
+}
 
 const NewTodoForm = ({}) => {
+  const [state, formAction] = useActionState(newTodo, initialState)
   return (
     <div className="md:flex">
-      <form action={newTodo}>
+      <form action={formAction}>
         <input
           name="content"
           type="text"

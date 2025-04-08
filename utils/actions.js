@@ -1,8 +1,108 @@
 'use server'
 import { revalidatePath } from 'next/cache'
+import { SignupFormSchema } from '@/lib/definitions'
+import { cookies } from 'next/headers'
 import db from './db'
+import axios from 'axios'
+import { createSession } from '@/lib/session'
+import { decrypt } from '@/lib/session'
+
+export const getAllUSersWeights = async (user) => {
+  const cookie = (await cookies()).get('session')?.value
+  const session = await decrypt(cookie)
+  try {
+    const res = await axios.get(
+      `http://localhost:8080/api/weight/user?userId=${user.id}`,
+      {
+        headers: { Authorization: `Bearer ${session.token}` },
+      }
+    )
+    return res.data
+  } catch (err) {
+    console.log("Error getting user's todos", err)
+  }
+}
+
+export const getAllUsersTodos = async (user) => {
+  const cookie = (await cookies()).get('session')?.value
+  const session = await decrypt(cookie)
+  try {
+    const res = await axios.get(
+      `http://localhost:8080/api/todos/user?userId=${user.id}`,
+      {
+        headers: { Authorization: `Bearer ${session.token}` },
+      }
+    )
+    return res.data
+  } catch (err) {
+    console.log("Error getting user's todos", err)
+  }
+}
+
+export const getCurrentUser = async () => {
+  const cookie = (await cookies()).get('session')?.value
+  const session = await decrypt(cookie)
+
+  try {
+    const res = await axios.get('http://localhost:8080/api/auth/me', {
+      headers: { Authorization: `Bearer ${session.token}` },
+    })
+
+    return res.data
+  } catch (error) {
+    console.log(error)
+    return null
+  }
+}
+
+export const login = async (state, data) => {
+  const email = data.get('email')
+  const password = data.get('password')
+  try {
+    const response = await axios.post('http://localhost:8080/api/auth/login', {
+      email: email,
+      password: password,
+    })
+  } catch (err) {
+    return err
+  }
+
+  await createSession(response.data.token)
+  return response.data
+}
+
+export const signup = async (state, formData) => {
+  const validatedFields = SignupFormSchema.safeParse({
+    firstName: formData.get('firstName'),
+    lastName: formData.get('lastName'),
+    email: formData.get('email'),
+    password: formData.get('password'),
+  })
+
+  if (!validatedFields.success) {
+    return {
+      errors: validatedFields.error.flatten().fieldErrors,
+    }
+  }
+
+  const { firstName, lastName, email, password } = validatedFields.data
+
+  const response = await axios.post('http://localhost:8080/api/auth/register', {
+    firstname: firstName,
+    lastname: lastName,
+    email: email,
+    password: password,
+  })
+
+  await createSession(response.data.id)
+
+  return response.data
+}
 
 export const newWeight = async (data) => {
+  const cookie = (await cookies()).get('session')?.value
+  const session = await decrypt(cookie)
+  const user = await getCurrentUser()
   const weight = data.get('weight')
   const dateString = data.get('date')
 
@@ -38,12 +138,22 @@ export const newWeight = async (data) => {
     transformedDate = new Date()
   }
 
-  const weightEntry = await db.weight.create({
-    data: {
-      weight: parseFloat(weight),
-      date: transformedDate,
-    },
-  })
+  try {
+    const res = await axios.post(
+      `http://localhost:8080/api/weight/user?userId=${user.id}`,
+      {
+        weight: weight,
+        date: transformedDate,
+        userId: user.id,
+      },
+      {
+        headers: { Authorization: `Bearer ${session.token}` },
+      }
+    )
+    return res.data
+  } catch (err) {
+    console.log("Error getting user's todos", err)
+  }
 
   revalidatePath('/health/weight')
 }
@@ -90,23 +200,47 @@ export const deletePayment = async (id) => {
 }
 
 export const completeTodo = async (id) => {
-  await db.todo.update({
-    where: { id },
-    data: {
-      completed: true,
-    },
-  })
+  const cookie = (await cookies()).get('session')?.value
+  const session = await decrypt(cookie)
+  try {
+    const res = await axios.put(
+      `http://localhost:8080/api/todos/${id}`,
+      {
+        completed: true,
+      },
+      {
+        headers: { Authorization: `Bearer ${session.token}` },
+      }
+    )
+  } catch (err) {
+    console.log("Error getting user's todos", err)
+  }
+
   revalidatePath('/todos')
 }
 
-export const newTodo = async (data) => {
-  const newTodo = data.get('content')
-  if (newTodo) {
-    const todo = await db.todo.create({
-      data: {
-        content: data.get('content'),
+export const newTodo = async (state, data) => {
+  console.log('HIPPO: ', data)
+  const cookie = (await cookies()).get('session')?.value
+  const session = await decrypt(cookie)
+  const user = await getCurrentUser()
+  const content = data.get('content')
+
+  try {
+    const res = await axios.post(
+      'http://localhost:8080/api/todos',
+      {
+        content: content,
+        userId: user.id,
       },
-    })
+      {
+        headers: { Authorization: `Bearer ${session.token}` },
+      }
+    )
+    console.log('HIPPO 2: ', res.data)
+    return res.data
+  } catch (err) {
+    console.log("Error getting user's todos", err)
   }
 
   revalidatePath('/todos')

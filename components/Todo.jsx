@@ -14,11 +14,12 @@ const Todo = ({ todo }) => {
     >
       {todo.content}{' '}
       <span className="text-gray-600">
-        {todo.dueDate.toLocaleString('en-GB', {
-          day: '2-digit',
-          month: '2-digit',
-          year: '2-digit',
-        })}
+        {todo.dueDate &&
+          todo.dueDate.toLocaleString('en-GB', {
+            day: '2-digit',
+            month: '2-digit',
+            year: '2-digit',
+          })}
       </span>
     </div>
   )

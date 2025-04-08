@@ -1,36 +1,24 @@
 import NewTodoForm from '@/components/NewTodoForm'
 import TodoList from '@/components/TodoList'
+import { getAllUsersTodos, getCurrentUser } from '@/utils/actions'
 import db from '@/utils/db'
 
-const getOpenTodosData = async () => {
-  const openTodos = await db.todo.findMany({
-    where: {
-      completed: false,
-    },
-    orderBy: {
-      createdAt: 'desc',
-    },
+const getTodosData = async (user, complete) => {
+  const todos = await getAllUsersTodos(user)
+  const openTodos = []
+  todos.forEach((todo) => {
+    if (todo.completed === complete) {
+      openTodos.push(todo)
+    }
   })
 
   return openTodos
 }
 
-const getClosedTodosData = async () => {
-  const closedTodos = await db.todo.findMany({
-    where: {
-      completed: true,
-    },
-    orderBy: {
-      createdAt: 'desc',
-    },
-    take: 10,
-  })
-  return closedTodos
-}
-
 const Todos = async () => {
-  const openTodos = await getOpenTodosData()
-  const closedTodos = await getClosedTodosData()
+  const user = await getCurrentUser()
+  const openTodos = await getTodosData(user, false)
+  const closedTodos = await getTodosData(user, true)
   return (
     <div className="md:flex">
       <div className="mr-10 mb-15">
