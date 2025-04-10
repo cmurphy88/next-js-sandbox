@@ -1,33 +1,32 @@
 'use client'
 
-import { useState } from 'react'
-import Chart from 'chart.js/auto'
-import { CategoryScale } from 'chart.js'
+import 'chartjs-adapter-date-fns'
 import LineChart from '@/components/LineChart'
 
-Chart.register(CategoryScale)
-
 const WeightChart = ({ weights }) => {
-  const formatDate = (dateString) => {
-    const date = new Date(dateString)
-    const day = String(date.getDate()).padStart(2, '0')
-    const month = String(date.getMonth() + 1).padStart(2, '0')
-    const year = date.getFullYear()
-    return `${day}-${month}-${year}`
-  }
-  const [chartData, setChartData] = useState({
-    labels: weights.map((data) => formatDate(data.date)),
+  const sortedWeights = weights.sort(
+    (a, b) => new Date(a.date) - new Date(b.date)
+  )
+
+  const chartData = {
     datasets: [
       {
-        label: 'Weight (kg) ',
-        data: weights.map((data) => data.weight),
-        backgroundColor: ['red', 'blue', 'green'],
-        borderColor: 'white',
-        borderWidth: 1,
+        label: 'Weight (kg)',
+        data: sortedWeights.map((data) => ({
+          x: new Date(data.date),
+          y: data.weight,
+        })),
+        borderColor: 'rgb(75, 192, 192)',
+        borderWidth: 2,
+        tension: 0.2,
+        backgroundColor: 'rgb(75, 192, 192)',
+        pointBackgroundColor: 'rgb(75, 192, 192)',
+        pointBorderColor: '#fff',
       },
     ],
-  })
+  }
 
   return <LineChart chartData={chartData} />
 }
+
 export default WeightChart

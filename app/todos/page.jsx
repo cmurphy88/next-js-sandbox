@@ -30,7 +30,7 @@ const Todos = async () => {
       </div>
       <div>
         <h2 className="pt-5 pb-1.5">Closed</h2>
-        <TodoList todos={closedTodos} />
+        <TodoList todos={closedTodos.slice(-10)} />
       </div>
     </div>
   )

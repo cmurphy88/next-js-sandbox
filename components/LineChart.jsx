@@ -7,9 +7,60 @@ function LineChart({ chartData }) {
       <Line
         data={chartData}
         options={{
+          responsive: true,
+          maintainAspectRatio: true,
           plugins: {
             legend: {
-              display: false,
+              display: true,
+              position: 'top',
+            },
+            tooltip: {
+              mode: 'index',
+              intersect: false,
+              callbacks: {
+                label: function (context) {
+                  let label = context.dataset.label || ''
+                  if (label) {
+                    label += ': '
+                  }
+                  if (context.parsed.y !== null) {
+                    label += context.parsed.y.toFixed(1) + ' kg'
+                  }
+                  return label
+                },
+              },
+            },
+          },
+          scales: {
+            x: {
+              type: 'time',
+              time: {
+                unit: 'day',
+                tooltipFormat: 'dd MMM yyyy',
+                displayFormats: {
+                  day: 'dd MMM',
+                  week: 'dd MMM yy',
+                  month: 'MMM yyyy',
+                  year: 'yyyy',
+                },
+              },
+              title: {
+                display: true,
+                text: 'Date',
+              },
+              ticks: {
+                autoSkip: true,
+                maxTicksLimit: 10,
+                maxRotation: 45,
+                minRotation: 0,
+              },
+            },
+            y: {
+              beginAtZero: false,
+              title: {
+                display: true,
+                text: 'Weight (kg)',
+              },
             },
           },
         }}

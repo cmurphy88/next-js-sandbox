@@ -63,12 +63,11 @@ export const login = async (state, data) => {
       email: email,
       password: password,
     })
+    await createSession(response.data.token)
+    return response.data
   } catch (err) {
     return err
   }
-
-  await createSession(response.data.token)
-  return response.data
 }
 
 export const signup = async (state, formData) => {
@@ -131,6 +130,7 @@ export const newWeight = async (data) => {
         throw new Error('Invalid date format')
       }
     } else {
+      console.log('MAMMOTH')
       transformedDate = new Date()
     }
   } catch (error) {
@@ -138,9 +138,12 @@ export const newWeight = async (data) => {
     transformedDate = new Date()
   }
 
+  console.log('MERMAID: ', dateString)
+  console.log('MERMAID: ', transformedDate)
+
   try {
     const res = await axios.post(
-      `http://localhost:8080/api/weight/user?userId=${user.id}`,
+      `http://localhost:8080/api/weight`,
       {
         weight: weight,
         date: transformedDate,
@@ -150,20 +153,28 @@ export const newWeight = async (data) => {
         headers: { Authorization: `Bearer ${session.token}` },
       }
     )
+    revalidatePath('/health/weight')
     return res.data
   } catch (err) {
-    console.log("Error getting user's todos", err)
+    console.log('Error creating new weight entry', err)
   }
-
-  revalidatePath('/health/weight')
 }
 
 export const deleteWeight = async (id) => {
-  await db.weight.delete({
-    where: { id },
-  })
-
-  revalidatePath('finances')
+  const cookie = (await cookies()).get('session')?.value
+  const session = await decrypt(cookie)
+  try {
+    const res = await axios.post(
+      `http://localhost:8080/api/weight/delete/${id}`,
+      null,
+      {
+        headers: { Authorization: `Bearer ${session.token}` },
+      }
+    )
+    revalidatePath('health/weight')
+  } catch (err) {
+    console.log('Error deleting weight:', err)
+  }
 }
 
 export const newPayment = async (data) => {
@@ -215,12 +226,10 @@ export const completeTodo = async (id) => {
   } catch (err) {
     console.log("Error getting user's todos", err)
   }
-
   revalidatePath('/todos')
 }
 
 export const newTodo = async (state, data) => {
-  console.log('HIPPO: ', data)
   const cookie = (await cookies()).get('session')?.value
   const session = await decrypt(cookie)
   const user = await getCurrentUser()
@@ -237,11 +246,9 @@ export const newTodo = async (state, data) => {
         headers: { Authorization: `Bearer ${session.token}` },
       }
     )
-    console.log('HIPPO 2: ', res.data)
+    revalidatePath('/todos')
     return res.data
   } catch (err) {
-    console.log("Error getting user's todos", err)
+    console.log('Error created new todo:', err)
   }
-
-  revalidatePath('/todos')
 }
