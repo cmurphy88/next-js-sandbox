@@ -1,4 +1,4 @@
-const HealthDashboard = () => {
+const HealthDashboard = async () => {
   return (
     <div>
       <h1 className="pt-3 pb-3">Health</h1>

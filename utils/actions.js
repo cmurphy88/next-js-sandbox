@@ -6,13 +6,14 @@ import db from './db'
 import axios from 'axios'
 import { createSession } from '@/lib/session'
 import { decrypt } from '@/lib/session'
+import { redirect } from 'next/navigation'
 
 export const getAllUSersWeights = async (user) => {
   const cookie = (await cookies()).get('session')?.value
   const session = await decrypt(cookie)
   try {
     const res = await axios.get(
-      `http://localhost:8080/api/weight/user?userId=${user.id}`,
+      `${process.env.API_ORIGIN}/weight/user?userId=${user.id}`,
       {
         headers: { Authorization: `Bearer ${session.token}` },
       }
@@ -28,7 +29,7 @@ export const getAllUsersTodos = async (user) => {
   const session = await decrypt(cookie)
   try {
     const res = await axios.get(
-      `http://localhost:8080/api/todos/user?userId=${user.id}`,
+      `${process.env.API_ORIGIN}/todos/user?userId=${user.id}`,
       {
         headers: { Authorization: `Bearer ${session.token}` },
       }
@@ -44,13 +45,13 @@ export const getCurrentUser = async () => {
   const session = await decrypt(cookie)
 
   try {
-    const res = await axios.get('http://localhost:8080/api/auth/me', {
+    const res = await axios.get(`${process.env.API_ORIGIN}/auth/me`, {
       headers: { Authorization: `Bearer ${session.token}` },
     })
 
     return res.data
   } catch (error) {
-    console.log(error)
+    console.log('Redirecting to home page', error)
     return null
   }
 }
@@ -58,16 +59,27 @@ export const getCurrentUser = async () => {
 export const login = async (state, data) => {
   const email = data.get('email')
   const password = data.get('password')
+  const callbackUrl = data.get('callbackUrl')
+
   try {
-    const response = await axios.post('http://localhost:8080/api/auth/login', {
+    const response = await axios.post(`${process.env.API_ORIGIN}/auth/login`, {
       email: email,
       password: password,
     })
-    await createSession(response.data.token)
-    return response.data
+    console.log(response.data)
+    await createSession(response.data.token, response.data.userDetails.id)
+    const redirectTo =
+      callbackUrl && callbackUrl.startsWith('/')
+        ? callbackUrl
+        : defaultDashboardPath
   } catch (err) {
     return err
   }
+  const redirectTo =
+    callbackUrl && callbackUrl.startsWith('/')
+      ? callbackUrl
+      : defaultDashboardPath
+  redirect(redirectTo)
 }
 
 export const signup = async (state, formData) => {
@@ -86,7 +98,7 @@ export const signup = async (state, formData) => {
 
   const { firstName, lastName, email, password } = validatedFields.data
 
-  const response = await axios.post('http://localhost:8080/api/auth/register', {
+  const response = await axios.post(`${process.env.API_ORIGIN}/auth/register`, {
     firstname: firstName,
     lastname: lastName,
     email: email,
@@ -143,7 +155,7 @@ export const newWeight = async (data) => {
 
   try {
     const res = await axios.post(
-      `http://localhost:8080/api/weight`,
+      `${process.env.API_ORIGIN}/weight`,
       {
         weight: weight,
         date: transformedDate,
@@ -165,7 +177,7 @@ export const deleteWeight = async (id) => {
   const session = await decrypt(cookie)
   try {
     const res = await axios.post(
-      `http://localhost:8080/api/weight/delete/${id}`,
+      `${process.env.API_ORIGIN}/weight/delete/${id}`,
       null,
       {
         headers: { Authorization: `Bearer ${session.token}` },
@@ -215,7 +227,7 @@ export const completeTodo = async (id) => {
   const session = await decrypt(cookie)
   try {
     const res = await axios.put(
-      `http://localhost:8080/api/todos/${id}`,
+      `${process.env.API_ORIGIN}/todos/${id}`,
       {
         completed: true,
       },
@@ -237,7 +249,7 @@ export const newTodo = async (state, data) => {
 
   try {
     const res = await axios.post(
-      'http://localhost:8080/api/todos',
+      `${process.env.API_ORIGIN}/todos`,
       {
         content: content,
         userId: user.id,

@@ -9,12 +9,16 @@ Chart.register(CategoryScale)
 
 const getWeightEntries = async () => {
   const user = await getCurrentUser()
-  const weights = await getAllUSersWeights(user)
-  return weights
+
+  if (user !== null) {
+    const weights = await getAllUSersWeights(user)
+    return weights
+  }
 }
 
 const WeightPage = async () => {
   const weights = await getWeightEntries()
+  console.log('WEIGHTS', weights)
   const firstWeight = weights[0].weight
   const lastWeight = weights[weights.length - 1].weight
   const difference = firstWeight - lastWeight
