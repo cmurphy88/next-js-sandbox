@@ -83,6 +83,7 @@ export const login = async (state, data) => {
 }
 
 export const signup = async (state, formData) => {
+  const callbackUrl = formData.get('callbackUrl')
   const validatedFields = SignupFormSchema.safeParse({
     firstName: formData.get('firstName'),
     lastName: formData.get('lastName'),
@@ -98,16 +99,29 @@ export const signup = async (state, formData) => {
 
   const { firstName, lastName, email, password } = validatedFields.data
 
-  const response = await axios.post(`${process.env.API_ORIGIN}/auth/register`, {
-    firstname: firstName,
-    lastname: lastName,
-    email: email,
-    password: password,
-  })
-
-  await createSession(response.data.id)
-
-  return response.data
+  try {
+    const response = await axios.post(
+      `${process.env.API_ORIGIN}/auth/register`,
+      {
+        firstname: firstName,
+        lastname: lastName,
+        email: email,
+        password: password,
+      }
+    )
+    await createSession(response.data.token, response.data.userDetails.id)
+    const redirectTo =
+      callbackUrl && callbackUrl.startsWith('/')
+        ? callbackUrl
+        : defaultDashboardPath
+  } catch (err) {
+    return err
+  }
+  const redirectTo =
+    callbackUrl && callbackUrl.startsWith('/')
+      ? callbackUrl
+      : defaultDashboardPath
+  redirect(redirectTo)
 }
 
 export const newWeight = async (data) => {

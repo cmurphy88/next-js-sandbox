@@ -7,7 +7,7 @@ import { cookies } from 'next/headers'
 // '/' is PUBLIC (Landing Page)
 const protectedBasePaths = ['/todos', '/health', '/finances'] // Sections requiring login
 const publicPaths = ['/login', '/signup', '/'] // Always public paths
-const dashboardPath = '/health' // Or '/todos' - where logged-in users land first
+const dashboardPath = '/dashboard' // Or '/todos' - where logged-in users land first
 const loginPath = '/login'
 
 // --- Middleware Logic ---

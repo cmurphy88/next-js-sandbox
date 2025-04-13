@@ -1,21 +1,30 @@
 'use client'
 
 import { signup } from '@/utils/actions'
+import { useSearchParams } from 'next/navigation'
 import { useActionState } from 'react'
 
+const initialState = {
+  error: null,
+}
+
 const SignupForm = () => {
-  const [state, action, pending] = useActionState(signup, undefined)
+  const searchParams = useSearchParams()
+  const callbackUrl = searchParams.get('callbackUrl') || '/health'
+
+  const [state, action, pending] = useActionState(signup, initialState)
 
   return (
-    <div className="text-center pt-5 md:pt-10 max-w-2/3">
+    <div className="text-center pt-5 md:pt-10 max-w-md mx-auto">
       <p className="text-4xl pb-2 md:pb-10">Signup</p>
       <form action={action}>
-        <div className="text-2xl text-left md:text-right p-2 grid grid-cols-1 md:grid-cols-2">
-          <label className="p-2" htmlFor="firstName">
+        <input type="hidden" name="callbackUrl" value={callbackUrl} />
+        <div className="text-2xl text-left p-2 grid grid-cols-1 gap-2 mb-3">
+          <label className="p-1 block" htmlFor="firstName">
             First Name:
           </label>
           <input
-            className="bg-white/50 rounded-2xl p-2"
+            className="bg-gray-200 text-black rounded-lg p-2 w-full"
             id="firstName"
             name="firstName"
             placeholder="First Name"
@@ -23,12 +32,12 @@ const SignupForm = () => {
         </div>
         {state?.errors?.firstName && <p>{state.errors.firstName}</p>}
 
-        <div className="text-2xl text-left md:text-right p-2 grid grid-cols-1 md:grid-cols-2">
-          <label className="p-2" htmlFor="lastName">
+        <div className="text-2xl text-left p-2 grid grid-cols-1 gap-2 mb-4">
+          <label className="p-1 block" htmlFor="lastName">
             Last Name
           </label>
           <input
-            className="bg-white/50 rounded-2xl p-2"
+            className="bg-gray-200 text-black rounded-lg p-2 w-full"
             id="lastName"
             name="lastName"
             placeholder="Last Name"
@@ -36,12 +45,12 @@ const SignupForm = () => {
         </div>
         {state?.errors?.lastName && <p>{state.errors.lastName}</p>}
 
-        <div className="text-2xl text-left md:text-right p-2 grid grid-cols-1 md:grid-cols-2">
-          <label className="p-2" htmlFor="email">
+        <div className="text-2xl text-left p-2 grid grid-cols-1 gap-2 mb-4">
+          <label className="p-1 block" htmlFor="email">
             Email
           </label>
           <input
-            className="bg-white/50 rounded-2xl p-2"
+            className="bg-gray-200 text-black rounded-lg p-2 w-full"
             id="email"
             name="email"
             placeholder="Email"
@@ -49,12 +58,12 @@ const SignupForm = () => {
         </div>
         {state?.errors?.email && <p>{state.errors.email}</p>}
 
-        <div className="text-2xl text-left md:text-right p-2 grid grid-cols-1 md:grid-cols-2">
-          <label className="p-2" htmlFor="password">
+        <div className="text-2xl text-left p-2 grid grid-cols-1 gap-2 mb-4">
+          <label className="p-1 block" htmlFor="password">
             Password
           </label>
           <input
-            className="bg-white/50 rounded-2xl p-2"
+            className="bg-gray-200 text-black rounded-lg p-2 w-full"
             id="password"
             name="password"
             type="password"

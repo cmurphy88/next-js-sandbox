@@ -7,14 +7,11 @@ const Home = async () => {
 
   return (
     <div>
-      <h1 className="py-5">Dashboard</h1>
+      <h1 className="text-center py-5">LifePro</h1>
       {!user && (
-        <div className="md:flex">
+        <div className="">
           <div className="">
             <LoginForm />
-          </div>
-          <div className="">
-            <SignupForm />
           </div>
         </div>
       )}

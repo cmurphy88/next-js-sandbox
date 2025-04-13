@@ -7,12 +7,12 @@ const Todo = ({ todo }) => {
 
   return (
     <div
-      className={`border border-black/20 cursor-pointer ${
+      className={`cursor-pointer ${
         todo.completed ? 'line-through text-gray-500' : ''
       }`}
       onClick={() => startTransition(() => completeTodo(todo.id))}
     >
-      {todo.content}{' '}
+      {'→ '} {todo.content}{' '}
       <span className="text-gray-600">
         {todo.dueDate &&
           todo.dueDate.toLocaleString('en-GB', {
