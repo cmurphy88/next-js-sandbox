@@ -4,7 +4,7 @@ import { SignupFormSchema } from '@/lib/definitions'
 import { cookies } from 'next/headers'
 import db from './db'
 import axios from 'axios'
-import { createSession } from '@/lib/session'
+import { createSession, deleteSession } from '@/lib/session'
 import { decrypt } from '@/lib/session'
 import { redirect } from 'next/navigation'
 
@@ -43,6 +43,10 @@ export const getAllUsersTodos = async (user) => {
 export const getCurrentUser = async () => {
   const cookie = (await cookies()).get('session')?.value
   const session = await decrypt(cookie)
+  console.log('GOOGLE: ', session)
+  if (!session) {
+    redirect('/login')
+  }
 
   try {
     const res = await axios.get(`${process.env.API_ORIGIN}/auth/me`, {
