@@ -1,48 +1,35 @@
 import NewTodoForm from '@/components/NewTodoForm'
 import TodoList from '@/components/TodoList'
-import db from '@/utils/db'
+import { getAllUsersTodos, getCurrentUser } from '@/utils/actions'
 
-const getOpenTodosData = async () => {
-  const openTodos = await db.todo.findMany({
-    where: {
-      completed: false,
-    },
-    orderBy: {
-      createdAt: 'desc',
-    },
+const getTodosData = async (user, complete) => {
+  const todos = await getAllUsersTodos(user)
+  const todosData = []
+  todos.forEach((todo) => {
+    if (todo.completed === complete) {
+      todosData.push(todo)
+    }
   })
 
-  return openTodos
-}
-
-const getClosedTodosData = async () => {
-  const closedTodos = await db.todo.findMany({
-    where: {
-      completed: true,
-    },
-    orderBy: {
-      createdAt: 'desc',
-    },
-    take: 10,
-  })
-  return closedTodos
+  return todosData
 }
 
 const Todos = async () => {
-  const openTodos = await getOpenTodosData()
-  const closedTodos = await getClosedTodosData()
+  const user = await getCurrentUser()
+  const openTodos = await getTodosData(user, false)
+  const closedTodos = await getTodosData(user, true)
   return (
-    <div className="md:flex">
-      <div className="mr-10 mb-15">
-        <h2 className="pt-5 pb-1.5">Open</h2>
-        <NewTodoForm />
-        <div className="mt-5">
+    <div className="text-center md:flex md:flex-row">
+      <div className="flex-1 md:flex-1/2">
+        <h1 className="pt-5 pb-5">Open</h1>
+        <div className="mb-10">
           <TodoList todos={openTodos} />
         </div>
+        <NewTodoForm />
       </div>
-      <div>
-        <h2 className="pt-5 pb-1.5">Closed</h2>
-        <TodoList todos={closedTodos} />
+      <div className="md:flex-1/2">
+        <h1 className="pt-5 pb-5">Closed</h1>
+        <TodoList todos={closedTodos.slice(-10)} />
       </div>
     </div>
   )

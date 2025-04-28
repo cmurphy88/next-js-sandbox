@@ -1,33 +1,113 @@
 'use client'
 
-import { useState } from 'react'
-import Chart from 'chart.js/auto'
-import { CategoryScale } from 'chart.js'
+import {
+  Chart,
+  LineController,
+  LineElement,
+  PointElement,
+  LinearScale,
+  TimeScale,
+  Tooltip,
+  Legend,
+} from 'chart.js'
+
+import 'chartjs-adapter-date-fns'
 import LineChart from '@/components/LineChart'
 
-Chart.register(CategoryScale)
+Chart.register(
+  LineController,
+  LineElement,
+  PointElement,
+  LinearScale,
+  TimeScale,
+  Tooltip,
+  Legend
+)
 
 const WeightChart = ({ weights }) => {
-  const formatDate = (dateString) => {
-    const date = new Date(dateString)
-    const day = String(date.getDate()).padStart(2, '0')
-    const month = String(date.getMonth() + 1).padStart(2, '0')
-    const year = date.getFullYear()
-    return `${day}-${month}-${year}`
-  }
-  const [chartData, setChartData] = useState({
-    labels: weights.map((data) => formatDate(data.date)),
+  const sortedWeights = weights.sort(
+    (a, b) => new Date(a.date) - new Date(b.date)
+  )
+
+  const chartData = {
     datasets: [
       {
-        label: 'Weight (kg) ',
-        data: weights.map((data) => data.weight),
-        backgroundColor: ['red', 'blue', 'green'],
-        borderColor: 'white',
-        borderWidth: 1,
+        label: 'Weight (kg)',
+        data: sortedWeights.map((data) => ({
+          x: new Date(data.date),
+          y: data.weight,
+        })),
+        borderColor: 'rgb(75, 192, 192)',
+        borderWidth: 2,
+        tension: 0.3,
+        backgroundColor: 'rgb(75, 192, 192)',
+        pointBackgroundColor: 'rgb(75, 192, 192)',
+        pointBorderColor: '#fff',
       },
     ],
-  })
+  }
 
-  return <LineChart chartData={chartData} />
+  const chartOptions = {
+    responsive: true,
+    maintainAspectRatio: true,
+    plugins: {
+      legend: {
+        display: true,
+        position: 'top',
+      },
+      tooltip: {
+        mode: 'index',
+        intersect: false,
+        callbacks: {
+          label: function (context) {
+            let label = context.dataset.label || ''
+            if (label) {
+              label += ': '
+            }
+            if (context.parsed.y !== null) {
+              label += context.parsed.y.toFixed(1) + ' kg'
+            }
+            return label
+          },
+        },
+      },
+    },
+    scales: {
+      x: {
+        type: 'time',
+        time: {
+          unit: 'day',
+          tooltipFormat: 'dd MMM yyyy',
+          displayFormats: {
+            day: 'dd MMM',
+            week: 'dd MMM yy',
+            month: 'MMM yyyy',
+            year: 'yyyy',
+          },
+        },
+        title: {
+          display: true,
+          text: 'Date',
+        },
+        ticks: {
+          autoSkip: true,
+          maxTicksLimit: 10,
+          maxRotation: 45,
+          minRotation: 0,
+        },
+      },
+      y: {
+        type: 'linear',
+        beginAtZero: false,
+        title: {
+          display: true,
+          text: 'Weight (kg)',
+        },
+      },
+    },
+  }
+
+  return <LineChart chartData={chartData} options={chartOptions} />
 }
+
 export default WeightChart
