@@ -1,11 +1,14 @@
 'use client'
 
 import LoginForm from '@/components/LoginForm'
+import { Suspense } from 'react'
 
 const LoginPage = () => {
   return (
     <div>
-      <LoginForm />
+      <Suspense>
+        <LoginForm />
+      </Suspense>
     </div>
   )
 }
