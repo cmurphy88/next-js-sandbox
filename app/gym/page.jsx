@@ -1,4 +1,6 @@
+import CollapsibleBox from '@/components/CollapsibleBox'
 import { MockSessionResponse } from '@/mocks/MockSessionResponse'
+import { WorkoutPlans } from '@/mocks/MockWorkoutPlans'
 
 const GymPage = () => {
   const getLatestSessions = () => {
@@ -25,10 +27,32 @@ const GymPage = () => {
     return day + '-' + month + '-' + year + '@' + hour + ':' + minute
   }
 
+  const getWorkoutPlans = () => {
+    return WorkoutPlans
+  }
+
+  const workoutPlans = getWorkoutPlans()
+
   return (
     <div className="text-center mt-10 md:w-4/5 mx-auto">
-      <h1>Gym Landing Page</h1>
-      <div className="border-2 border-red-500">
+      <p className="text-4xl pb-5">Gym Landing Page</p>
+      <div>
+        <p className="text-2xl">Workout Plans</p>
+        {workoutPlans.map((plan) => {
+          const execriseList = plan.exercises.map((exercise) => {
+            return (
+              <div className="flex flex-row hover:bg-gray-900/50 text-left">
+                <p className="p-3 text-xl basis-1/2">{exercise.name}</p>
+                <p className="p-3 pl-5 text-xl">
+                  {exercise.sets} x {exercise.repLower}-{exercise.repUpper}
+                </p>
+              </div>
+            )
+          })
+          return <CollapsibleBox title={plan.name} children={execriseList} />
+        })}
+      </div>
+      <div>
         <h2>Content</h2>
         <div className="">
           <div className="py-5 w-full">
@@ -38,7 +62,7 @@ const GymPage = () => {
                 latestSessions.map((session) => {
                   return (
                     <a
-                      className="bg-gray-600 text-2xl hover:underline"
+                      className="bg-gray-600 text-2xl hover: hover:bg-gray-500 hover:scale-105"
                       href={`/gym/${session.id}`}
                     >
                       <p className="text-3xl">{session.name}</p>
