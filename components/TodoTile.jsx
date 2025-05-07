@@ -21,8 +21,7 @@ const TodoTile = async () => {
   return (
     <>
       {' '}
-      <p className="text-4xl underline underline-offset-8 mb-4">Todo</p>{' '}
-      <NewTodoForm />
+      <p className="text-4xl mb-4">Todo</p> <NewTodoForm />
       {openTodos.length > 0 && <TodoList todos={openTodos} />}
       {!openTodos.length > 0 && (
         <div className="">
