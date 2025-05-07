@@ -37,7 +37,7 @@ const WeightTile = async () => {
 
   return (
     <>
-      <p className="text-4xl underline underline-offset-8 mb-4">Weight</p>
+      <p className="text-4xl mb-4">Weight</p>
       {weights && weights.length > 0 && (
         <div className="pt-5">
           <h1>Current Weight: {currentWeight.weight}kg</h1>

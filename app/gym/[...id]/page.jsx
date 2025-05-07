@@ -1,13 +1,13 @@
-import { MockSessionResponse } from '@/mocks/MockSessionResponse'
+import { getSessionById } from '@/utils/actions'
 
 const LogEntry = async ({ params }) => {
   const { id } = await params
 
-  const getSessionById = (id) => {
-    return MockSessionResponse[0]
+  const getSession = async (id) => {
+    return await getSessionById(id)
   }
 
-  const session = getSessionById(id)
+  const session = await getSession(id)
   const sessionDate = () => {
     const dateTimeRaw = session.date
     const dateRaw = dateTimeRaw.split('T')[0].split('-')
@@ -35,14 +35,14 @@ const LogEntry = async ({ params }) => {
         <div className="pt-5">
           <h1>Exercises</h1>
           {session.exercises.map((exercise) => {
-            const exerciseLink = '/gym/exercise/' + exercise.id
+            const exerciseLink = '/gym/exercise/' + exercise.exercise_id
             let totalWeightPerSet = 0
             return (
               <div className="text-left flex flex-col" key={exercise.id}>
                 <div className="bg-gray-700 rounded-xl my-2 md:my-5 p-5 shadow-xl shadow-black/50 flex flex-row gap-5">
-                  <p className="basis-2/5 md:text-3xl my-auto border-r-2">
+                  <p className="basis-2/5 md:text-3xl my-auto md:border-r-2">
                     <a className="hover:underline" href={exerciseLink}>
-                      {exercise.name}
+                      {exercise.exercise_name}
                     </a>
                   </p>
                   <div className="my-auto">
@@ -67,9 +67,9 @@ const LogEntry = async ({ params }) => {
               </div>
             )
           })}
-          <div className="p-5">
+          <div className="pt-5 md:p-5">
             <h1 className="pb-3">Session Stats</h1>
-            <div className="flex flex-row gap-3 justify-evenly">
+            <div className="flex flex-row gap-3 justify-evenly sm:overflow-auto">
               <p className="p-5 bg-blue-400 rounded-2xl shadow-xl shadow-black">
                 <span className="font-bold">Total session volume:</span>{' '}
                 {totalWeight}kg

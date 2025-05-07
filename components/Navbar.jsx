@@ -6,18 +6,18 @@ const { default: Link } = require('next/link')
 const Navbar = () => {
   const links = [
     { href: '/', label: 'Home' },
-    { href: '/health', label: 'Health' },
+    { href: '/gym', label: 'Gym' },
     { href: '/health/weight', label: 'Weight' },
-    { href: '/health/plan', label: 'Plan' },
+    { href: '/health', label: 'Health' },
     { href: '/todos', label: 'Todos' },
     { href: '/finances', label: 'Finances' },
   ]
 
   return (
     <>
-      <div className="max-sm:hidden">
+      <div className="max-sm:hidden shadow shadow-white/10 p-5">
         <nav className="flex py-5 md:py-0">
-          <h1>CM</h1>
+          <h1 className="text-white/50">Life</h1>
           <ul className="flex items-center">
             {links.map((link) => (
               <li key={link.href}>
